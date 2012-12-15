@@ -1,5 +1,6 @@
 package org.alveolo.butterfly.cocoon;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -11,15 +12,20 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.stream.StreamSource;
+
+import org.springframework.context.ApplicationContext;
 
 
 class TransformerTracker implements URIResolver {
 	private final List<Dependency> dependencies = new ArrayList<Dependency>();
+	private final ApplicationContext context;
 
 	final Templates templates;
 
-	TransformerTracker(SAXTransformerFactory transformerFactory, Source urlSource)
+	TransformerTracker(ApplicationContext context, SAXTransformerFactory transformerFactory, Source urlSource)
 	throws TransformerConfigurationException {
+		this.context = context;
 		transformerFactory.setURIResolver(this);
 		templates = transformerFactory.newTemplates(urlSource);
 	}
@@ -37,16 +43,25 @@ class TransformerTracker implements URIResolver {
 	@Override
 	public Source resolve(String href, String base) throws TransformerException {
 		try {
-			URI uri = new URI(base);
+			URI uri;
 
-			if (href.length() > 0) {
-				uri = uri.resolve(href);
+			if (href.startsWith("classpath:")) {
+				uri = context.getResource(href).getURI();
+			} else {
+				uri = new URI(base);
+
+				if (href.length() > 0) {
+					uri = uri.resolve(href);
+				}
 			}
 
 			if (uri.toString().startsWith("file:")) {
 				dependencies.add(new Dependency(uri));
 			}
-		} catch (URISyntaxException ignore) {}
+
+			return new StreamSource(uri.toString());
+		} catch (URISyntaxException ignore) {
+		} catch (IOException ignore) {}
 
 		return null;
 	}

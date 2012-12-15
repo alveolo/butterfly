@@ -69,22 +69,9 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 	 *
 	 * @param source the XSLT URL source
 	 */
-	public SaxonTransformer(final URL source) {
-		this(source, null);
-	}
-
-	/**
-	 * Creates a new transformer reading the XSLT from the URL source and
-	 * setting the TransformerFactory attributes.
-	 *
-	 * This constructor is useful when users want to perform XSLT transformation
-	 * using <a href="http://xml.apache.org/xalan-j/xsltc_usage.html">xsltc</a>.
-	 *
-	 * @param source the XSLT URL source
-	 * @param attributes the Transformer Factory attributes
-	 */
-	public SaxonTransformer(final URL source, final Map<String, Object> attributes) {
-		loadXSLT(source, attributes);
+	public SaxonTransformer(final ApplicationContext context, final URL source) {
+		setApplicationContext(context);
+		loadXSLT(source, null);
 	}
 
 	@Override
@@ -168,7 +155,7 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 			}
 
 			try {
-				tracker = new TransformerTracker(transformerFactory, urlSource);
+				tracker = new TransformerTracker(context, transformerFactory, urlSource);
 
 				// store the XSLT into the cache for future reuse
 				ValidityValue<TransformerTracker> cacheEntry =
