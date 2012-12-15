@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!-- Checking for updates: -->
+	<!-- mvn versions:display-plugin-updates -->
+	<!-- mvn versions:display-dependency-updates -->
+	<!-- mvn versions:display-property-updates -->
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.alveolo.butterfly</groupId>
+	<artifactId>butterfly</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
+	<name>Butterfly</name>
+	<description>Useful extensions for Cocoon 3 and Saxon 9.4</description>
+	<url>https://github.com/alveolo/butterfly</url>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:git@github.com:alveolo/butterfly.git</connection>
+		<developerConnection>scm:git:git@github.com:alveolo/butterfly.git</developerConnection>
+		<url>git@github.com:alveolo/butterfly.git</url>
+	</scm>
+
+	<developers>
+		<developer>
+			<name>Igor Malinin</name>
+			<email>igorzep@gmail.com</email>
+		</developer>
+	</developers>
+
+	<prerequisites>
+		<maven>3.0</maven>
+	</prerequisites>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<spring.version>3.2.0.RELEASE</spring.version>
+	</properties>
+
+	<modules>
+		<module>cocoon</module>
+		<module>saxon</module>
+	</modules>
+
+	<repositories>
+		<repository>
+			<id>apache-snapshots</id>
+			<url>https://repository.apache.org/content/groups/snapshots/</url>
+		</repository>
+	</repositories>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>javax.mail</groupId>
+				<artifactId>mail</artifactId>
+				<version>1.4.5</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>3.0.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>4.3.1.Final</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-oxm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-config</artifactId>
+				<version>3.1.1.RELEASE</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>Saxon-HE</artifactId>
+				<version>9.4.0.6</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.cocoon.sax</groupId>
+				<artifactId>cocoon-sax</artifactId>
+				<version>3.0.0-beta-1-SNAPSHOT</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.3.2</version>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+</project>
