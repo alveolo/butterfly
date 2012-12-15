@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE page>
+<page>
+<content>
+<form xmlns:bind="http://alveolo.org/cocoon/bind" bind:model="foo">
+<label bind:path="name"/>
+<input bind:path="name"/>
+</form>
+</content>
+</page>
