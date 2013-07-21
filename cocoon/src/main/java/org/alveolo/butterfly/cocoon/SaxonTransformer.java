@@ -225,6 +225,8 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 				HttpServletResponse servletResponse = HttpContextHelper.getResponse(parameters);
 
 				if (servletRequest != null) {
+					transformer.setURIResolver(new SaxonResolver(servletRequest, servletResponse));
+
 					transformer.setParameter(Message.LOCALE_PARAM, RequestContextUtils.getLocale(servletRequest));
 
 					transformer.setParameter(CoreConstants.SERVLET_REQUEST_PARAM, servletRequest);
