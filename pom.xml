@@ -21,7 +21,7 @@
 	</parent>
 
 	<name>Butterfly</name>
-	<description>Useful extensions for Cocoon 3 and Saxon 9.4</description>
+	<description>Useful extensions for Cocoon 3 and Saxon 9.5</description>
 	<url>https://github.com/alveolo/butterfly</url>
 
 	<licenses>
