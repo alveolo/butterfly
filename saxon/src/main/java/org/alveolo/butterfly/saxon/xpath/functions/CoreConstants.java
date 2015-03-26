@@ -1,17 +1,20 @@
 package org.alveolo.butterfly.saxon.xpath.functions;
 
+import net.sf.saxon.om.StructuredQName;
+
 
 public interface CoreConstants {
-	String NAMESPACE = "http://alveolo.org/cocoon/core";
+	String PREFIX = "core", NAMESPACE = "http://alveolo.org/cocoon/core";
 
 	// Spring objects
-	String APPLICATION_CONTEXT_PARAM = NAMESPACE + "/context";
-	String MODEL_PARAM = NAMESPACE + "/model";
-	String REQUEST_CONTEXT_PARAM = NAMESPACE + "/request";
+	StructuredQName APPLICATION_CONTEXT_PARAM = new StructuredQName(PREFIX, NAMESPACE, "context");
+	StructuredQName MODEL_PARAM = new StructuredQName(PREFIX, NAMESPACE, "model");
+
+	StructuredQName REQUEST_CONTEXT_PARAM = new StructuredQName(PREFIX, NAMESPACE, "request");
 
 	// Servlet objects
-	String SERVLET_CONTEXT_PARAM  = NAMESPACE + "/servlet/context";
-	String SERVLET_REQUEST_PARAM  = NAMESPACE + "/servlet/request";
-	String SERVLET_RESPONSE_PARAM = NAMESPACE + "/servlet/response";
-	String SERVLET_SESSION_PARAM  = NAMESPACE + "/servlet/session";
+	StructuredQName SERVLET_CONTEXT_PARAM  = new StructuredQName(PREFIX, NAMESPACE, "servletContext");
+	StructuredQName SERVLET_REQUEST_PARAM  = new StructuredQName(PREFIX, NAMESPACE, "servletRequest");
+	StructuredQName SERVLET_RESPONSE_PARAM = new StructuredQName(PREFIX, NAMESPACE, "servletResponse");
+	StructuredQName SERVLET_SESSION_PARAM  = new StructuredQName(PREFIX, NAMESPACE, "servletSession");
 }

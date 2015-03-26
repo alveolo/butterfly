@@ -32,7 +32,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-
 import org.alveolo.butterfly.cocoon.HttpContextHelper;
 import org.alveolo.butterfly.cocoon.SaxonTransformer;
 import org.alveolo.butterfly.saxon.xpath.functions.CoreConstants;
@@ -89,9 +88,9 @@ public class XPathFunctionTest {
 		URL xml = getClass().getResource("/empty.xml");
 		URL xsl = getClass().getResource("/i18n.xsl");
 
-		Transformer transformer = tf.newTransformer(new StreamSource(xsl.toExternalForm()));
+		final Transformer transformer = tf.newTransformer(new StreamSource(xsl.toExternalForm()));
 		System.out.println(transformer.getOutputProperties());
-		transformer.setParameter(CoreConstants.APPLICATION_CONTEXT_PARAM, context);
+		transformer.setParameter(CoreConstants.APPLICATION_CONTEXT_PARAM.getClarkName(), context);
 		transformer.setParameter("bar", new Bar(UUID.randomUUID(), new Date()));
 		transformer.transform(new StreamSource(xml.toExternalForm()), new StreamResult(System.out));
 	}

@@ -7,12 +7,14 @@ import net.sf.saxon.expr.JPConverter;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
+import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.Item;
+import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.iter.ListIterator;
 import net.sf.saxon.value.ObjectValue;
+import net.sf.saxon.value.SequenceExtent;
 import net.sf.saxon.value.SequenceType;
 
 import org.alveolo.butterfly.fixup.spring.MarshallingSource;
@@ -22,7 +24,8 @@ import org.springframework.oxm.Marshaller;
 
 @SuppressWarnings("serial")
 public class Marshall extends ExtensionFunctionDefinition {
-	private static final StructuredQName qName = new StructuredQName("", CoreConstants.NAMESPACE, "marshall");
+	private static final StructuredQName qName =
+			new StructuredQName(CoreConstants.PREFIX, CoreConstants.NAMESPACE, "marshall");
 
 	@Override
 	public StructuredQName getFunctionQName() {
@@ -48,17 +51,17 @@ public class Marshall extends ExtensionFunctionDefinition {
 
 	private static class RequestAttributeCall extends ExtensionFunctionCall {
 		@Override
-		@SuppressWarnings({"rawtypes", "unchecked"})
-		public SequenceIterator call(SequenceIterator[] arguments, XPathContext context) throws XPathException {
-			List items = new ArrayList();
+		public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+			List<Item> items = new ArrayList<Item>();
 
 			Marshaller marshaller = getMarshaller(context);
 
 			JPConverter converter = JPConverter.FromSource.INSTANCE;
 
-			SequenceIterator argument = arguments[0];
+			Sequence argument = arguments[0];
+			SequenceIterator<? extends Item> i = argument.iterate();
 			while (true) {
-				Item item = argument.next();
+				Item item = i.next();
 				if (item == null) {
 					break;
 				}
@@ -66,13 +69,14 @@ public class Marshall extends ExtensionFunctionDefinition {
 				if (item instanceof ObjectValue) {
 					Object object = ((ObjectValue) item).getObject();
 					MarshallingSource source = new MarshallingSource(marshaller, object);
-					items.add(converter.convert(source, context));
+					DocumentInfo doc = (DocumentInfo) converter.convert(source, context);
+					items.add(doc);
 				} else {
 					throw new XPathException("Not an object!", getContainer());
 				}
 			}
 
-			return new ListIterator(items);
+			return new SequenceExtent<Item>(items);
 		}
 
 		private Marshaller getMarshaller(XPathContext context) {
@@ -80,7 +84,8 @@ public class Marshall extends ExtensionFunctionDefinition {
 		}
 
 		private ApplicationContext getApplicationContext(XPathContext context) {
-			return (ApplicationContext) context.getController().getParameter(CoreConstants.APPLICATION_CONTEXT_PARAM);
+			return (ApplicationContext) context.getController().getParameter(
+					CoreConstants.APPLICATION_CONTEXT_PARAM.getClarkName());
 		}
 	}
 }

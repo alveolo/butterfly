@@ -9,7 +9,8 @@ import net.sf.saxon.om.StructuredQName;
 
 @SuppressWarnings("serial")
 public class SessionAttribute extends AttributeFunctionDefinition {
-	private static final StructuredQName qName = new StructuredQName("", CoreConstants.NAMESPACE, "session-attribute");
+	private static final StructuredQName qName =
+			new StructuredQName(CoreConstants.PREFIX, CoreConstants.NAMESPACE, "session-attribute");
 
 	@Override
 	public StructuredQName getFunctionQName() {
@@ -24,7 +25,9 @@ public class SessionAttribute extends AttributeFunctionDefinition {
 	private static class SessionAttributeCall extends AttributeFunctionCall {
 		@Override
 		protected Object getAttribute(Controller controller, String name) {
-			HttpSession session = (HttpSession) controller.getParameter(CoreConstants.SERVLET_SESSION_PARAM);
+			HttpSession session = (HttpSession) controller.getParameter(
+					CoreConstants.SERVLET_SESSION_PARAM.getClarkName());
+
 			return (session == null) ? null : session.getAttribute(name);
 		}
 	}

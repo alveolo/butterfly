@@ -8,12 +8,11 @@ import net.sf.saxon.expr.JPConverter;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
-import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.iter.EmptyIterator;
+import net.sf.saxon.value.EmptySequence;
 import net.sf.saxon.value.SequenceType;
-import net.sf.saxon.value.Value;
 
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.context.expression.EnvironmentAccessor;
@@ -33,7 +32,8 @@ import org.springframework.web.servlet.support.RequestContext;
 
 @SuppressWarnings("serial")
 public class Eval extends ExtensionFunctionDefinition {
-	private static final StructuredQName qName = new StructuredQName("", CoreConstants.NAMESPACE, "eval");
+	private static final StructuredQName qName =
+			new StructuredQName(CoreConstants.PREFIX, CoreConstants.NAMESPACE, "eval");
 
 	@Override
 	public StructuredQName getFunctionQName() {
@@ -63,24 +63,23 @@ public class Eval extends ExtensionFunctionDefinition {
 		private final ExpressionParser expressionParser = new SpelExpressionParser();
 
 		@Override
-		@SuppressWarnings({"rawtypes", "unchecked"})
-		public SequenceIterator call(SequenceIterator[] arguments, XPathContext context) throws XPathException {
-			Expression expression = expressionParser.parseExpression(arguments[0].next().getStringValue());
+		public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
+			Expression expression = expressionParser.parseExpression(arguments[0].head().getStringValue());
 
 			Object result = expression.getValue(getEvaluationContext(context.getController()));
 
 			if (result == null) {
-				return EmptyIterator.getInstance();
+				return EmptySequence.getInstance();
 			}
 
 			JPConverter converter = JPConverter.allocate(result.getClass(), context.getConfiguration());
 
-			return Value.getIterator(converter.convert(result, context));
+			return converter.convert(result, context);
 		}
 
 		private EvaluationContext getEvaluationContext(Controller controller) {
-			HttpServletRequest request = (HttpServletRequest)
-					controller.getParameter(CoreConstants.SERVLET_REQUEST_PARAM);
+			HttpServletRequest request = (HttpServletRequest) controller.getParameter(
+					CoreConstants.SERVLET_REQUEST_PARAM.getClarkName());
 
 			EvaluationContext evaluationContext =
 					(EvaluationContext) request.getAttribute(EVALUATION_CONTEXT_ATTRIBUTE);
@@ -88,7 +87,8 @@ public class Eval extends ExtensionFunctionDefinition {
 				return evaluationContext;
 			}
 
-			RequestContext rc = (RequestContext) controller.getParameter(CoreConstants.REQUEST_CONTEXT_PARAM);
+			RequestContext rc = (RequestContext) controller.getParameter(
+					CoreConstants.REQUEST_CONTEXT_PARAM.getClarkName());
 
 			StandardEvaluationContext context = new StandardEvaluationContext();
 			context.addPropertyAccessor(new PagePropertyAccessor(request));

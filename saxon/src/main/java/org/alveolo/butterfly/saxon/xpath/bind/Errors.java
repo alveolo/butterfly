@@ -8,7 +8,8 @@ import org.springframework.web.servlet.support.BindStatus;
 
 @SuppressWarnings("serial")
 public class Errors extends BindFunctionDefinition {
-	private static final StructuredQName qName = new StructuredQName("", BindConstants.NAMESPACE, "errors");
+	private static final StructuredQName qName =
+			new StructuredQName(BindConstants.PREFIX, BindConstants.NAMESPACE, "errors");
 
 	@Override
 	public StructuredQName getFunctionQName() {

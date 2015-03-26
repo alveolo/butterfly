@@ -8,7 +8,8 @@ import org.springframework.web.servlet.support.BindStatus;
 
 @SuppressWarnings("serial")
 public class Expression extends BindFunctionDefinition {
-	private static final StructuredQName qName = new StructuredQName("", BindConstants.NAMESPACE, "expression");
+	private static final StructuredQName qName =
+			new StructuredQName(BindConstants.PREFIX, BindConstants.NAMESPACE, "expression");
 
 	@Override
 	public StructuredQName getFunctionQName() {

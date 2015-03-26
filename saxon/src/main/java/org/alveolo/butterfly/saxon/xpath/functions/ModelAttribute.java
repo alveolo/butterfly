@@ -28,22 +28,24 @@ public class ModelAttribute extends AttributeFunctionDefinition {
 	private static class ModelAttributeCall extends AttributeFunctionCall {
 		@Override
 		protected Object getAttribute(Controller controller, String name) {
-			RequestContext rc = (RequestContext) controller.getParameter(CoreConstants.REQUEST_CONTEXT_PARAM);
+			RequestContext rc = (RequestContext) controller.getParameter(
+					CoreConstants.REQUEST_CONTEXT_PARAM.getClarkName());
 
 			Map<String, Object> model = (rc != null) ? rc.getModel() : getModel(controller);
 			if (model != null) {
 				return model.get(name);
 			}
 
-			HttpServletRequest request = (HttpServletRequest)
-					controller.getParameter(CoreConstants.SERVLET_REQUEST_PARAM);
+			HttpServletRequest request = (HttpServletRequest) controller.getParameter(
+					CoreConstants.SERVLET_REQUEST_PARAM.getClarkName());
 
 			return request.getAttribute(name);
 		}
 
 		@SuppressWarnings("unchecked")
 		private Map<String, Object> getModel(Controller controller) {
-			return (Map<String, Object>) controller.getParameter(CoreConstants.MODEL_PARAM);
+			return (Map<String, Object>) controller.getParameter(
+					CoreConstants.MODEL_PARAM.getClarkName());
 		}
 	}
 }

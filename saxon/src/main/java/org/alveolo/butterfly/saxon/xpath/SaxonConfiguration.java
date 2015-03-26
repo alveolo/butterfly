@@ -21,9 +21,8 @@ import org.alveolo.butterfly.saxon.xpath.security.Authentication;
  * but are disabled for some reason. Whatever the reason but as it is OSS and license allows
  * this - just enabling it.
  */
+@SuppressWarnings("serial")
 public class SaxonConfiguration extends Configuration {
-	private static final long serialVersionUID = 1L;
-
 	public SaxonConfiguration() {
 		// core
 		registerExtensionFunction(new Marshall());
@@ -45,7 +44,7 @@ public class SaxonConfiguration extends Configuration {
 
 	@Override
 	public void checkLicensedFeature(int feature, String name) throws LicenseException {
-		if (feature == LicenseFeature.PROFESSIONAL_EDITION && "custom serialization".equals(name)) {
+		if (feature == LicenseFeature.PROFESSIONAL_EDITION && name.startsWith("custom serialization")) {
 			return; // allow setting up indent attribute to xsl:output, useful for debugging
 		}
 

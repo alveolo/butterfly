@@ -8,7 +8,8 @@ import org.springframework.web.servlet.support.BindStatus;
 
 @SuppressWarnings("serial")
 public class Value extends BindFunctionDefinition {
-	private static final StructuredQName qName = new StructuredQName("", BindConstants.NAMESPACE, "value");
+	private static final StructuredQName qName =
+			new StructuredQName(BindConstants.PREFIX, BindConstants.NAMESPACE, "value");
 
 	@Override
 	public StructuredQName getFunctionQName() {

@@ -14,14 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamSource;
 
+import net.sf.saxon.Controller;
 import net.sf.saxon.TransformerFactoryImpl;
+import net.sf.saxon.TransformerHandlerImpl;
 
 import org.alveolo.butterfly.saxon.xpath.SaxonConfiguration;
 import org.alveolo.butterfly.saxon.xpath.functions.CoreConstants;
@@ -48,7 +48,7 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 	private static final Map<String, ValidityValue<TransformerTracker>> XSLT_CACHE =
 			new ConcurrentHashMap<String, ValidityValue<TransformerTracker>>();
 
-	private static final SAXTransformerFactory GENERIC_FACTORY = createNewSAXTransformerFactory();
+	private static final TransformerFactoryImpl GENERIC_FACTORY = createNewSAXTransformerFactory();
 
 	private static final Pattern XSLT_PARAMETER_NAME_PATTERN = Pattern.compile("[a-zA-Z_][\\w\\-\\.]*");
 
@@ -147,7 +147,7 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 			// XSLT has to be parsed
 			Source urlSource = new StreamSource(source.toExternalForm());
 
-			SAXTransformerFactory transformerFactory = createNewSAXTransformerFactory();
+			TransformerFactoryImpl transformerFactory = createNewSAXTransformerFactory();
 			if (attributes != null && !attributes.isEmpty()) {
 				for (Entry<String, Object> attribute : attributes.entrySet()) {
 					transformerFactory.setAttribute(attribute.getKey(), attribute.getValue());
@@ -195,9 +195,11 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 
 	private TransformerHandler createTransformerHandler() {
 		try {
-			TransformerHandler transformerHandler = GENERIC_FACTORY.newTransformerHandler(templates);
+			final TransformerHandlerImpl transformerHandler =
+					(TransformerHandlerImpl) GENERIC_FACTORY.newTransformerHandler(templates);
 
-			final Transformer transformer = transformerHandler.getTransformer();
+			final Controller controller = (Controller) transformerHandler.getTransformer();
+			// controller.getExecutable().getGlobalVariableMap().allocateSlotNumber(qName);
 
 			if (configuration != null) {
 				for (Entry<String, Object> entry : configuration.entrySet()) {
@@ -205,40 +207,45 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 
 					// is valid XSLT parameter name
 					if (XSLT_PARAMETER_NAME_PATTERN.matcher(name).matches()) {
-						transformer.setParameter(name, entry.getValue());
+						controller.setParameter(name, entry.getValue());
 					}
 				}
 			}
 
-			transformer.setErrorListener(new TraxErrorListener(LOG, source.toExternalForm()));
+			controller.setErrorListener(new TraxErrorListener(LOG, source.toExternalForm()));
 
-			transformer.setParameter(CoreConstants.APPLICATION_CONTEXT_PARAM, context);
+			if (context != null) {
+				controller.setParameter(CoreConstants.APPLICATION_CONTEXT_PARAM.getClarkName(), context);
+			}
 
 			Map<String, Object> model = HttpContextHelper.getModel(parameters);
-			transformer.setParameter(CoreConstants.MODEL_PARAM, model);
+			controller.setParameter(CoreConstants.MODEL_PARAM.getClarkName(), model);
 
 			if (parameters != null) try {
 				ServletContext servletContext = HttpContextHelper.getServletContext(parameters);
-				transformer.setParameter(CoreConstants.SERVLET_CONTEXT_PARAM, servletContext);
+				controller.setParameter(CoreConstants.SERVLET_CONTEXT_PARAM.getClarkName(), servletContext);
 
 				HttpServletRequest servletRequest = HttpContextHelper.getRequest(parameters);
 				HttpServletResponse servletResponse = HttpContextHelper.getResponse(parameters);
 
 				if (servletRequest != null) {
-					transformer.setURIResolver(new SaxonResolver(servletRequest, servletResponse));
+					controller.setURIResolver(new SaxonResolver(servletRequest, servletResponse));
 
-					transformer.setParameter(Message.LOCALE_PARAM, RequestContextUtils.getLocale(servletRequest));
+					controller.setParameter(Message.LOCALE_PARAM.getClarkName(),
+							RequestContextUtils.getLocale(servletRequest));
 
-					transformer.setParameter(CoreConstants.SERVLET_REQUEST_PARAM, servletRequest);
-					transformer.setParameter(CoreConstants.SERVLET_SESSION_PARAM, servletRequest.getSession(false));
+					controller.setParameter(CoreConstants.SERVLET_REQUEST_PARAM.getClarkName(), servletRequest);
+
+					controller.setParameter(CoreConstants.SERVLET_SESSION_PARAM.getClarkName(),
+							servletRequest.getSession(false));
 
 					// add support for form binding
-					transformer.setParameter(CoreConstants.REQUEST_CONTEXT_PARAM,
+					controller.setParameter(CoreConstants.REQUEST_CONTEXT_PARAM.getClarkName(),
 							new RequestContext(servletRequest, servletResponse, servletContext, model));
 				}
 
 				if (servletResponse != null) {
-					transformer.setParameter(CoreConstants.SERVLET_RESPONSE_PARAM, servletResponse);
+					controller.setParameter(CoreConstants.SERVLET_RESPONSE_PARAM.getClarkName(), servletResponse);
 				}
 			} catch (IllegalStateException e) {
 				LOG.debug("Not a Servlet request!", e);
@@ -264,7 +271,7 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 	 *
 	 * @return a new transformer factory
 	 */
-	private static SAXTransformerFactory createNewSAXTransformerFactory() {
+	private static TransformerFactoryImpl createNewSAXTransformerFactory() {
 		TransformerFactoryImpl factory = new TransformerFactoryImpl(new SaxonConfiguration());
 
 		return factory;

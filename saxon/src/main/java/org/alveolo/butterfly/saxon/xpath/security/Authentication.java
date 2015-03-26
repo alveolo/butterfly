@@ -14,7 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 @SuppressWarnings("serial")
 public class Authentication extends ExtensionFunctionDefinition {
-	private static final StructuredQName qName = new StructuredQName("", SecurityConstants.NAMESPACE, "authentication");
+	private static final StructuredQName qName =
+			new StructuredQName(SecurityConstants.PREFIX, SecurityConstants.NAMESPACE, "authentication");
 
 	@Override
 	public StructuredQName getFunctionQName() {

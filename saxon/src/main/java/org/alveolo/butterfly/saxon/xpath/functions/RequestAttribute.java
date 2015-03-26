@@ -9,7 +9,8 @@ import net.sf.saxon.om.StructuredQName;
 
 @SuppressWarnings("serial")
 public class RequestAttribute extends AttributeFunctionDefinition {
-	private static final StructuredQName qName = new StructuredQName("", CoreConstants.NAMESPACE, "request-attribute");
+	private static final StructuredQName qName =
+			new StructuredQName(CoreConstants.PREFIX, CoreConstants.NAMESPACE, "request-attribute");
 
 	@Override
 	public StructuredQName getFunctionQName() {
@@ -24,8 +25,8 @@ public class RequestAttribute extends AttributeFunctionDefinition {
 	private static class RequestAttributeCall extends AttributeFunctionCall {
 		@Override
 		protected Object getAttribute(Controller controller, String name) {
-			HttpServletRequest request = (HttpServletRequest)
-					controller.getParameter(CoreConstants.SERVLET_REQUEST_PARAM);
+			HttpServletRequest request = (HttpServletRequest) controller.getParameter(
+					CoreConstants.SERVLET_REQUEST_PARAM.getClarkName());
 
 			return request.getAttribute(name);
 		}
