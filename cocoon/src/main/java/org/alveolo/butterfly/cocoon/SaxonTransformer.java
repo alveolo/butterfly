@@ -74,7 +74,7 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 	 *
 	 * @param source the XSLT URL source
 	 */
-	public SaxonTransformer(final ApplicationContext context, final URL source) {
+	public SaxonTransformer(ApplicationContext context, URL source) {
 		setApplicationContext(context);
 		loadXSLT(source, null);
 	}
@@ -91,7 +91,7 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void setConfiguration(final Map<String, ? extends Object> configuration) {
+	public void setConfiguration(Map<String, ? extends Object> configuration) {
 		try {
 			source = (URL) configuration.get("source");
 		} catch (ClassCastException cce) {
@@ -115,7 +115,7 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 		this.configuration = new HashMap<String, Object>(configuration);
 	}
 
-	private void loadXSLT(final URL source, final Map<String, Object> attributes) {
+	private void loadXSLT(URL source, Map<String, Object> attributes) {
 		if (source == null) {
 			throw new IllegalArgumentException("The parameter 'source' mustn't be null.");
 		}
@@ -177,7 +177,7 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 	}
 
 	@Override
-	protected void setSAXConsumer(final SAXConsumer consumer) {
+	protected void setSAXConsumer(SAXConsumer consumer) {
 		TransformerHandler handler = createTransformerHandler();
 
 		if (consumer instanceof SaxonSerializer) {
@@ -185,7 +185,7 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 			SaxonSerializer serializer = (SaxonSerializer) consumer;
 			serializer.setTransformerHandler(handler);
 		} else {
-			final SAXResult result = new SAXResult();
+			SAXResult result = new SAXResult();
 			result.setHandler(consumer);
 			// According to TrAX specification, all TransformerHandlers are LexicalHandlers
 			result.setLexicalHandler(consumer);
@@ -200,12 +200,12 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 
 	private TransformerHandler createTransformerHandler() {
 		try {
-			final TransformerHandlerImpl transformerHandler =
+			TransformerHandlerImpl transformerHandler =
 					(TransformerHandlerImpl) GENERIC_FACTORY.newTransformerHandler(templates);
 
 			TransformerImpl impl = (TransformerImpl) transformerHandler.getTransformer();
 			XsltTransformer xslt = impl.getUnderlyingXsltTransformer();
-			final Controller controller = (Controller) xslt.getUnderlyingController();
+			Controller controller = (Controller) xslt.getUnderlyingController();
 
 			if (configuration != null) {
 				for (Entry<String, Object> entry : configuration.entrySet()) {

@@ -89,7 +89,7 @@ public class XPathFunctionTest {
 		URL xml = getClass().getResource("/empty.xml");
 		URL xsl = getClass().getResource("/i18n.xsl");
 
-		final TransformerImpl transformer = (TransformerImpl)
+		TransformerImpl transformer = (TransformerImpl)
 				tf.newTransformer(new StreamSource(xsl.toExternalForm()));
 		System.out.println(transformer.getOutputProperties());
 		transformer.getUnderlyingXsltTransformer()
