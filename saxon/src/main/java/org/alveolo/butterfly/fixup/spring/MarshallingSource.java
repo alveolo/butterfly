@@ -123,6 +123,9 @@ public class MarshallingSource extends SAXSource {
 			if ("http://xml.org/sax/features/namespace-prefixes".equals(name)) {
 				return false;
 			}
+			if ("http://xml.org/sax/features/validation".equals(name)) {
+				return false;
+			}
 			throw new SAXNotRecognizedException(name);
 		}
 
@@ -132,6 +135,9 @@ public class MarshallingSource extends SAXSource {
 				return;
 			}
 			if ("http://xml.org/sax/features/namespace-prefixes".equals(name) && !value) {
+				return;
+			}
+			if ("http://xml.org/sax/features/validation".equals(name) && !value) {
 				return;
 			}
 			throw new SAXNotRecognizedException(name);
