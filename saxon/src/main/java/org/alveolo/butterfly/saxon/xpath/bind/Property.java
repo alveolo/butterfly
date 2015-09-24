@@ -4,7 +4,6 @@ import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.om.StructuredQName;
 
 
-@SuppressWarnings("serial")
 public class Property extends BindFunctionDefinition {
 	private static final StructuredQName qName =
 			new StructuredQName(BindConstants.PREFIX, BindConstants.NAMESPACE, "property");

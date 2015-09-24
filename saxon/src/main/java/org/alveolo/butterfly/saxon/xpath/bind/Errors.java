@@ -6,7 +6,6 @@ import net.sf.saxon.om.StructuredQName;
 import org.springframework.web.servlet.support.BindStatus;
 
 
-@SuppressWarnings("serial")
 public class Errors extends BindFunctionDefinition {
 	private static final StructuredQName qName =
 			new StructuredQName(BindConstants.PREFIX, BindConstants.NAMESPACE, "errors");

@@ -9,13 +9,14 @@ import java.util.UUID;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import net.sf.saxon.Configuration;
-import net.sf.saxon.TransformerFactoryImpl;
-
+import org.alveolo.butterfly.cocoon.HttpContextHelper;
+import org.alveolo.butterfly.cocoon.SaxonTransformer;
+import org.alveolo.butterfly.saxon.xpath.functions.CoreConstants;
+import org.alveolo.butterfly.saxon.xpath.functions.Marshall;
+import org.alveolo.butterfly.saxon.xpath.functions.Message;
 import org.apache.cocoon.pipeline.NonCachingPipeline;
 import org.apache.cocoon.pipeline.Pipeline;
 import org.apache.cocoon.sax.SAXPipelineComponent;
@@ -32,11 +33,11 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.alveolo.butterfly.cocoon.HttpContextHelper;
-import org.alveolo.butterfly.cocoon.SaxonTransformer;
-import org.alveolo.butterfly.saxon.xpath.functions.CoreConstants;
-import org.alveolo.butterfly.saxon.xpath.functions.Marshall;
-import org.alveolo.butterfly.saxon.xpath.functions.Message;
+
+import net.sf.saxon.Configuration;
+import net.sf.saxon.TransformerFactoryImpl;
+import net.sf.saxon.jaxp.TransformerImpl;
+import net.sf.saxon.s9api.XdmExternalObject;
 
 
 public class XPathFunctionTest {
@@ -88,9 +89,11 @@ public class XPathFunctionTest {
 		URL xml = getClass().getResource("/empty.xml");
 		URL xsl = getClass().getResource("/i18n.xsl");
 
-		final Transformer transformer = tf.newTransformer(new StreamSource(xsl.toExternalForm()));
+		final TransformerImpl transformer = (TransformerImpl)
+				tf.newTransformer(new StreamSource(xsl.toExternalForm()));
 		System.out.println(transformer.getOutputProperties());
-		transformer.setParameter(CoreConstants.APPLICATION_CONTEXT_PARAM.getClarkName(), context);
+		transformer.getUnderlyingXsltTransformer()
+			.setParameter(CoreConstants.APPLICATION_CONTEXT_PARAM, new XdmExternalObject(context));
 		transformer.setParameter("bar", new Bar(UUID.randomUUID(), new Date()));
 		transformer.transform(new StreamSource(xml.toExternalForm()), new StreamResult(System.out));
 	}

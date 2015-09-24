@@ -2,6 +2,8 @@ package org.alveolo.butterfly.saxon.xpath.functions;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.alveolo.butterfly.saxon.xpath.ButterflyFunctionCall;
+
 import net.sf.saxon.Controller;
 import net.sf.saxon.expr.JPConverter;
 import net.sf.saxon.expr.StaticProperty;
@@ -16,7 +18,6 @@ import net.sf.saxon.value.EmptySequence;
 import net.sf.saxon.value.SequenceType;
 
 
-@SuppressWarnings("serial")
 public class RequestParameter extends ExtensionFunctionDefinition {
 	private static final StructuredQName qName =
 			new StructuredQName(CoreConstants.PREFIX, CoreConstants.NAMESPACE, "request-parameter");
@@ -43,7 +44,7 @@ public class RequestParameter extends ExtensionFunctionDefinition {
 		return new RequestParameterCall();
 	}
 
-	private static class RequestParameterCall extends ExtensionFunctionCall {
+	private static class RequestParameterCall extends ButterflyFunctionCall {
 		@Override
 		public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
 			String name = arguments[0].head().getStringValue();
@@ -53,15 +54,12 @@ public class RequestParameter extends ExtensionFunctionDefinition {
 				return EmptySequence.getInstance();
 			}
 
-			JPConverter converter = JPConverter.allocate(parameters.getClass(), context.getConfiguration());
-
-			return converter.convert(parameters, context);
+			return JPConverter.allocate(parameters.getClass(), null, context.getConfiguration())
+					.convert(parameters, context);
 		}
 
 		private String[] getParameter(Controller controller, String name) {
-			HttpServletRequest request = (HttpServletRequest) controller.getParameter(
-					CoreConstants.SERVLET_REQUEST_PARAM.getClarkName());
-
+			HttpServletRequest request = getParameter(controller, CoreConstants.SERVLET_REQUEST_PARAM);
 			return request.getParameterValues(name);
 		}
 	}

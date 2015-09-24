@@ -20,7 +20,7 @@ import javax.xml.transform.stream.StreamResult;
 import net.sf.saxon.TransformerFactoryImpl;
 import net.sf.saxon.lib.SaxonOutputKeys;
 
-import org.alveolo.butterfly.saxon.xpath.SaxonConfiguration;
+import org.alveolo.butterfly.saxon.xpath.ButterflyConfiguration;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -159,7 +159,7 @@ public class JavaMailSerializer extends RecordingSerializer {
 	// TODO: Multipart message composition, attachments and embedding images/styles into e-mail.
 
 	private static TransformerFactoryImpl createTransformerFactory() {
-		TransformerFactoryImpl tf = new TransformerFactoryImpl(new SaxonConfiguration());
+		TransformerFactoryImpl tf = new TransformerFactoryImpl(new ButterflyConfiguration());
 		tf.getConfiguration().setProcessor(tf);
 		return tf;
 	}

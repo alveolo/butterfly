@@ -18,11 +18,11 @@ import net.sf.saxon.value.SequenceExtent;
 import net.sf.saxon.value.SequenceType;
 
 import org.alveolo.butterfly.fixup.spring.MarshallingSource;
+import org.alveolo.butterfly.saxon.xpath.ButterflyFunctionCall;
 import org.springframework.context.ApplicationContext;
 import org.springframework.oxm.Marshaller;
 
 
-@SuppressWarnings("serial")
 public class Marshall extends ExtensionFunctionDefinition {
 	private static final StructuredQName qName =
 			new StructuredQName(CoreConstants.PREFIX, CoreConstants.NAMESPACE, "marshall");
@@ -49,17 +49,17 @@ public class Marshall extends ExtensionFunctionDefinition {
 		return new RequestAttributeCall();
 	}
 
-	private static class RequestAttributeCall extends ExtensionFunctionCall {
+	private static class RequestAttributeCall extends ButterflyFunctionCall {
 		@Override
 		public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
-			List<Item> items = new ArrayList<Item>();
-
-			Marshaller marshaller = getMarshaller(context);
-
+			ApplicationContext applicationContext = getParameter(context, CoreConstants.APPLICATION_CONTEXT_PARAM);
+			Marshaller marshaller = (Marshaller) applicationContext.getBean("marshaller");
 			JPConverter converter = JPConverter.FromSource.INSTANCE;
 
+			List<Item> items = new ArrayList<Item>();
+
 			Sequence argument = arguments[0];
-			SequenceIterator<? extends Item> i = argument.iterate();
+			SequenceIterator i = argument.iterate();
 			while (true) {
 				Item item = i.next();
 				if (item == null) {
@@ -67,7 +67,7 @@ public class Marshall extends ExtensionFunctionDefinition {
 				}
 
 				if (item instanceof ObjectValue) {
-					Object object = ((ObjectValue) item).getObject();
+					Object object = ((ObjectValue<?>) item).getObject();
 					MarshallingSource source = new MarshallingSource(marshaller, object);
 					DocumentInfo doc = (DocumentInfo) converter.convert(source, context);
 					items.add(doc);
@@ -76,16 +76,7 @@ public class Marshall extends ExtensionFunctionDefinition {
 				}
 			}
 
-			return new SequenceExtent<Item>(items);
-		}
-
-		private Marshaller getMarshaller(XPathContext context) {
-			return (Marshaller) getApplicationContext(context).getBean("marshaller");
-		}
-
-		private ApplicationContext getApplicationContext(XPathContext context) {
-			return (ApplicationContext) context.getController().getParameter(
-					CoreConstants.APPLICATION_CONTEXT_PARAM.getClarkName());
+			return new SequenceExtent(items);
 		}
 	}
 }

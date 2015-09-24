@@ -15,7 +15,6 @@ import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.value.EmptySequence;
 
 
-@SuppressWarnings("serial")
 public class MaxSize extends BindFunctionDefinition {
 	private static final StructuredQName qName =
 			new StructuredQName(BindConstants.PREFIX, BindConstants.NAMESPACE, "max-size");

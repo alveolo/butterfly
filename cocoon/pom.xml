@@ -15,7 +15,7 @@
 	<parent>
 		<groupId>org.alveolo.butterfly</groupId>
 		<artifactId>butterfly</artifactId>
-		<version>0.3-SNAPSHOT</version>
+		<version>0.4-SNAPSHOT</version>
 	</parent>
 
 	<name>Butterfly: Cocoon extensions</name>
@@ -54,8 +54,16 @@
 		</dependency>
 
 		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
+			<artifactId>javax.mail-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
 		</dependency>
 
 		<dependency>

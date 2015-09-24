@@ -2,22 +2,23 @@ package org.alveolo.butterfly.saxon.xpath.functions;
 
 import java.util.Locale;
 
+import org.alveolo.butterfly.saxon.xpath.ButterflyFunctionCall;
+import org.springframework.context.MessageSource;
+
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 
-import org.springframework.context.MessageSource;
 
-
-@SuppressWarnings("serial")
 public class Message extends ExtensionFunctionDefinition {
 	public static final String I18N_PREFIX = "i18n", I18N_NAMESPACE = "http://alveolo.org/cocoon/i18n";
-	public static final StructuredQName LOCALE_PARAM = new StructuredQName(I18N_PREFIX, I18N_NAMESPACE, "locale");
+	public static final QName LOCALE_PARAM = new QName(I18N_PREFIX, I18N_NAMESPACE, "locale");
 
 	private static final StructuredQName qName = new StructuredQName(I18N_PREFIX, I18N_NAMESPACE, "message");
 
@@ -59,7 +60,7 @@ public class Message extends ExtensionFunctionDefinition {
 		return new MessageFunctionCall();
 	}
 
-	private static class MessageFunctionCall extends ExtensionFunctionCall {
+	private static class MessageFunctionCall extends ButterflyFunctionCall {
 		@Override
 		public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
 			String code = arguments[0].head().getStringValue();
@@ -70,23 +71,14 @@ public class Message extends ExtensionFunctionDefinition {
 				args[i] = arguments[i+1].head().getStringValue();
 			}
 
-			Locale locale = getLocale(context);
+			Locale locale = getParameter(context, LOCALE_PARAM);
+			if (locale == null) {
+				locale = Locale.getDefault();
+			}
 
-			MessageSource source = getMessageSource(context);
-			String message = source.getMessage(code, args, locale);
-			return StringValue.makeStringValue(message);
-		}
+			MessageSource source = getParameter(context, CoreConstants.APPLICATION_CONTEXT_PARAM);
 
-		private MessageSource getMessageSource(XPathContext context) {
-			return (MessageSource) context.getController().getParameter(
-					CoreConstants.APPLICATION_CONTEXT_PARAM.getClarkName());
-		}
-
-		private Locale getLocale(XPathContext context) {
-			Locale locale = (Locale) context.getController().getParameter(
-					LOCALE_PARAM.getClarkName());
-
-			return (locale == null) ? Locale.getDefault() : locale;
+			return StringValue.makeStringValue(source.getMessage(code, args, locale));
 		}
 	}
 }

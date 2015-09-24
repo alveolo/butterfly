@@ -1,20 +1,18 @@
 package org.alveolo.butterfly.saxon.xpath.bind;
 
-import net.sf.saxon.Controller;
-import net.sf.saxon.expr.JPConverter;
-import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.lib.ExtensionFunctionCall;
-import net.sf.saxon.om.Sequence;
-import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.value.EmptySequence;
-
+import org.alveolo.butterfly.saxon.xpath.ButterflyFunctionCall;
 import org.alveolo.butterfly.saxon.xpath.functions.CoreConstants;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.support.RequestContext;
 
+import net.sf.saxon.expr.JPConverter;
+import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.om.Sequence;
+import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.EmptySequence;
 
-@SuppressWarnings("serial")
-public abstract class AbstractPropertyCall extends ExtensionFunctionCall {
+
+public abstract class AbstractPropertyCall extends ButterflyFunctionCall {
 	@Override
 	public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
 		String path = arguments[0].head().getStringValue();
@@ -24,8 +22,7 @@ public abstract class AbstractPropertyCall extends ExtensionFunctionCall {
 			return EmptySequence.getInstance();
 		}
 
-		Controller controller = context.getController();
-		RequestContext rc = (RequestContext) controller.getParameter(CoreConstants.REQUEST_CONTEXT_PARAM.getClarkName());
+		RequestContext rc = getParameter(context, CoreConstants.REQUEST_CONTEXT_PARAM);
 
 		BindingResult errors = (BindingResult) rc.getErrors(path.substring(0, dotPos));
 		String expression = path.substring(dotPos + 1);
@@ -47,7 +44,7 @@ public abstract class AbstractPropertyCall extends ExtensionFunctionCall {
 			return EmptySequence.getInstance();
 		}
 
-		JPConverter converter = JPConverter.allocate(res.getClass(), context.getConfiguration());
+		JPConverter converter = JPConverter.allocate(res.getClass(), null, context.getConfiguration());
 		return converter.convert(res, context);
 	}
 

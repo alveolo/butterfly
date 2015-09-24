@@ -21,9 +21,8 @@ import org.alveolo.butterfly.saxon.xpath.security.Authentication;
  * but are disabled for some reason. Whatever the reason but as it is OSS and license allows
  * this - just enabling it.
  */
-@SuppressWarnings("serial")
-public class SaxonConfiguration extends Configuration {
-	public SaxonConfiguration() {
+public class ButterflyConfiguration extends Configuration {
+	public ButterflyConfiguration() {
 		// core
 		registerExtensionFunction(new Marshall());
 		registerExtensionFunction(new ModelAttribute());

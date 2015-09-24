@@ -11,7 +11,6 @@ import net.sf.saxon.om.StructuredQName;
 import org.springframework.web.servlet.support.RequestContext;
 
 
-@SuppressWarnings("serial")
 public class ModelAttribute extends AttributeFunctionDefinition {
 	private static final StructuredQName qName = new StructuredQName("", CoreConstants.NAMESPACE, "attribute");
 
@@ -28,24 +27,21 @@ public class ModelAttribute extends AttributeFunctionDefinition {
 	private static class ModelAttributeCall extends AttributeFunctionCall {
 		@Override
 		protected Object getAttribute(Controller controller, String name) {
-			RequestContext rc = (RequestContext) controller.getParameter(
-					CoreConstants.REQUEST_CONTEXT_PARAM.getClarkName());
+			RequestContext rc = getParameter(controller, CoreConstants.REQUEST_CONTEXT_PARAM);
 
-			Map<String, Object> model = (rc != null) ? rc.getModel() : getModel(controller);
+			Map<String, Object> model;
+			if (rc != null) {
+				model = rc.getModel();
+			} else {
+				model = getParameter(controller, CoreConstants.MODEL_PARAM);
+			}
+
 			if (model != null) {
 				return model.get(name);
 			}
 
-			HttpServletRequest request = (HttpServletRequest) controller.getParameter(
-					CoreConstants.SERVLET_REQUEST_PARAM.getClarkName());
-
+			HttpServletRequest request = getParameter(controller, CoreConstants.SERVLET_REQUEST_PARAM);
 			return request.getAttribute(name);
-		}
-
-		@SuppressWarnings("unchecked")
-		private Map<String, Object> getModel(Controller controller) {
-			return (Map<String, Object>) controller.getParameter(
-					CoreConstants.MODEL_PARAM.getClarkName());
 		}
 	}
 }

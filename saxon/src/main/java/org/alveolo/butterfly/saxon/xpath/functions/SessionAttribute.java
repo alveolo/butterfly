@@ -7,7 +7,6 @@ import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.om.StructuredQName;
 
 
-@SuppressWarnings("serial")
 public class SessionAttribute extends AttributeFunctionDefinition {
 	private static final StructuredQName qName =
 			new StructuredQName(CoreConstants.PREFIX, CoreConstants.NAMESPACE, "session-attribute");
@@ -25,9 +24,7 @@ public class SessionAttribute extends AttributeFunctionDefinition {
 	private static class SessionAttributeCall extends AttributeFunctionCall {
 		@Override
 		protected Object getAttribute(Controller controller, String name) {
-			HttpSession session = (HttpSession) controller.getParameter(
-					CoreConstants.SERVLET_SESSION_PARAM.getClarkName());
-
+			HttpSession session = getParameter(controller, CoreConstants.SERVLET_SESSION_PARAM);
 			return (session == null) ? null : session.getAttribute(name);
 		}
 	}

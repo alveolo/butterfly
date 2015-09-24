@@ -14,6 +14,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.EmptySequence;
 import net.sf.saxon.value.SequenceType;
 
+import org.alveolo.butterfly.saxon.xpath.ButterflyFunctionCall;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.context.expression.EnvironmentAccessor;
 import org.springframework.context.expression.MapAccessor;
@@ -30,7 +31,6 @@ import org.springframework.expression.spel.support.StandardTypeConverter;
 import org.springframework.web.servlet.support.RequestContext;
 
 
-@SuppressWarnings("serial")
 public class Eval extends ExtensionFunctionDefinition {
 	private static final StructuredQName qName =
 			new StructuredQName(CoreConstants.PREFIX, CoreConstants.NAMESPACE, "eval");
@@ -57,7 +57,7 @@ public class Eval extends ExtensionFunctionDefinition {
 		return new EvalCall();
 	}
 
-	private static class EvalCall extends ExtensionFunctionCall {
+	private static class EvalCall extends ButterflyFunctionCall {
 		private static final String EVALUATION_CONTEXT_ATTRIBUTE = "org.alveolo.butterfly.saxon.xpath.EVALUATION_CONTEXT";
 
 		private final ExpressionParser expressionParser = new SpelExpressionParser();
@@ -72,14 +72,13 @@ public class Eval extends ExtensionFunctionDefinition {
 				return EmptySequence.getInstance();
 			}
 
-			JPConverter converter = JPConverter.allocate(result.getClass(), context.getConfiguration());
+			JPConverter converter = JPConverter.allocate(result.getClass(), null, context.getConfiguration());
 
 			return converter.convert(result, context);
 		}
 
 		private EvaluationContext getEvaluationContext(Controller controller) {
-			HttpServletRequest request = (HttpServletRequest) controller.getParameter(
-					CoreConstants.SERVLET_REQUEST_PARAM.getClarkName());
+			HttpServletRequest request = getParameter(controller, CoreConstants.SERVLET_REQUEST_PARAM);
 
 			EvaluationContext evaluationContext =
 					(EvaluationContext) request.getAttribute(EVALUATION_CONTEXT_ATTRIBUTE);
@@ -87,8 +86,7 @@ public class Eval extends ExtensionFunctionDefinition {
 				return evaluationContext;
 			}
 
-			RequestContext rc = (RequestContext) controller.getParameter(
-					CoreConstants.REQUEST_CONTEXT_PARAM.getClarkName());
+			RequestContext rc = getParameter(controller, CoreConstants.REQUEST_CONTEXT_PARAM);
 
 			StandardEvaluationContext context = new StandardEvaluationContext();
 			context.addPropertyAccessor(new PagePropertyAccessor(request));

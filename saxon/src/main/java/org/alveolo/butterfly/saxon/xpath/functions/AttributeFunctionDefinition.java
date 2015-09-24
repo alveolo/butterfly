@@ -4,7 +4,6 @@ import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.value.SequenceType;
 
 
-@SuppressWarnings("serial")
 public abstract class AttributeFunctionDefinition extends ExtensionFunctionDefinition {
 	@Override
 	public SequenceType[] getArgumentTypes() {
