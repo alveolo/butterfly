@@ -16,7 +16,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.springframework.context.ApplicationContext;
 
-
 class TransformerTracker implements URIResolver {
 	private final List<Dependency> dependencies = new ArrayList<Dependency>();
 	private final ApplicationContext context;

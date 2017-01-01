@@ -136,8 +136,8 @@ public class SaxonTransformer extends AbstractSAXTransformer implements Applicat
 		if (XSLT_CACHE.containsKey(source.toExternalForm())) {
 			// get the XSLT directly from the cache
 			ValidityValue<TransformerTracker> cacheEntry = XSLT_CACHE.get(source.toExternalForm());
-			if (cacheEntry.getLastModified() == lastModified) {
-				tracker = cacheEntry.getValue();
+			if (cacheEntry.lastModified == lastModified) {
+				tracker = cacheEntry.value;
 				if (tracker.hasChanged()) {
 					tracker = null;
 				}

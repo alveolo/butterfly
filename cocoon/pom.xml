@@ -2,12 +2,6 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-	<!-- Checking for updates: -->
-	<!-- mvn versions:display-plugin-updates -->
-	<!-- mvn versions:display-dependency-updates -->
-	<!-- mvn versions:display-property-updates -->
-
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>butterfly-cocoon</artifactId>
 	<packaging>jar</packaging>
@@ -15,7 +9,7 @@
 	<parent>
 		<groupId>org.alveolo.butterfly</groupId>
 		<artifactId>butterfly</artifactId>
-		<version>0.4-SNAPSHOT</version>
+		<version>0.5-SNAPSHOT</version>
 	</parent>
 
 	<name>Butterfly: Cocoon extensions</name>
@@ -42,9 +36,12 @@
 		</developer>
 	</developers>
 
-	<prerequisites>
-		<maven>3.0</maven>
-	</prerequisites>
+	<build>
+		<plugins>
+			<plugin><artifactId>maven-source-plugin</artifactId></plugin>
+			<plugin><artifactId>maven-javadoc-plugin</artifactId></plugin>
+		</plugins>
+	</build>
 
 	<dependencies>
 		<dependency>
@@ -67,8 +64,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.cocoon.sax</groupId>
-			<artifactId>cocoon-sax</artifactId>
+			<groupId>org.apache.cocoon</groupId>
+			<artifactId>cocoon-xml</artifactId>
 		</dependency>
 
 		<dependency>
@@ -99,5 +96,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 </project>
