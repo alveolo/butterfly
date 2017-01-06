@@ -1,3 +1,12 @@
 language: java
+
 jdk:
   - oraclejdk8
+
+env:
+  global:
+    - secure: "KODS+FHle5gYMXijBGciaWXml/C++e02SaPt61tnx3XedansNkRuM0eqIKJrcCJjdsAizYjnc2tE7jd7v6n3fJoc3yH4Fplte8K8YgitjTAstKZQneDZwwPepK4ZrS2SNJZuKKqbE3cywm7HecyEwGW5dljPLTGT0T9dPNUnRXwa56ZqEoDmj1EsT2i9u6DCQxx5nmL6LSyp9IFH2vyetwFhA0hXob9dCYsM/zZ0mDg6c5xTnw5AgzvhjZ3o63e7NHefzvaL/hJ1bUtrqZQqo+uwdYlP5ApZIVVb+KqonojkP2ZL3qKJeprPPnY3YeYTWq6+Uei6eyuTRefDMWL0hlWZo0x7PNFTQ1/5YmlpgbFnq4SsX0wii2H9D/NnWHnEYPfHkRjMnoqosG9Iejp/mpj0mmPDG7TBYLksDSU0v/ZelhtzCEodMtEaTE4djVuiLptn92B0KSPRquXZSPJVgGT/HArQM0+IRV6K5nGLA2DdUVttPFbwO2Gcl6+23/hS4GuEf80km4d6o0GQ9DG2Y5vejUjDDDHSyvCX1kwjjD89F2OWFY7mAAaZ2HXtBe8zDckpb0qLuKps0e9VV7arexo3CZ5dqCAJR+gwE8Bu8ME9zUXDQIylP4rOv1L/I/UgQV9Wi9Vr/kSiHzSw8KbIBN92ta4DWj5XqFAsjN36koY="
+    - secure: "EKmYDu1trsfS5jZf6Y1CA1FsV8VMv48KiVof8AwfcfUdp3Sc5xaKXzOE7ypr7WX9dfidK2uN+qpVETd2wvoDyre85WzdTZP0Kr9tJjFrnw2+UGLPhCmd7B0kNNzQhzs+vCyBzr/sZFWq7YxKvunQE0K7/JOTqsdAX5b3ieYuagryjRU/5XNSkhP3BZdLGFeG40rmfpyEoyEYFLi3QWdRsQF/4bm4FfOQkutIWWLasEu1+YMLkXv/1cXwTrmcP1XphDl9HJGMasnSoQR/I4PTAkyZmbLELBIpB5wBaEHpJqDUIMewVS3EcZxqGH3txvpj3F0yfTh09dQEEAO0h2S9qsxeQ2mpjUtc5k7NZ0t7IbOHffjKGeLgVGRSSlajsMyWmTYgykhHXQET5bh0bHJGl/pDQipBKrB7tsLRNt97+rtRwzm+TCSUlfDjyOkE1ZINy6qNXJ3zUAAym2Jce5IGsFcvIltw/6jFc15vVqCorvoO5RIocNSLFDCjdH1rIgsKk60bcIx/9kLgV4BmyTSXesxXy+gnIVHq17rOXfcdoJ2iaZG477IBoiagYlma9LZTYb903tplMS7+BQO3dpt15aNoXM9YIdJ7o1tIyDtwqmxrH2lpKVEr3hCyQJQ4H6lP6EVpAdVHrY611gDtPJJ5VV99zZ/qdsbWb1XSxnlSB+U="
+
+after_success:
+  - "[[ ${TRAVIS_PULL_REQUEST} == 'false' ]] && [[ ${TRAVIS_TAG} == '' ]] && mvn --settings .travis-settings.xml -B deploy"

@@ -56,11 +56,11 @@
 		<repository>
 			<id>bintray-alveolo-maven</id>
 			<name>alveolo-maven</name>
-			<url>https://api.bintray.com/maven/alveolo/maven/butterfly/;publish=1</url>
+			<url>https://api.bintray.com/maven/alveolo/maven/butterfly/;publish=0</url>
 		</repository>
 		<snapshotRepository>
-			<id>snapshots</id>
-			<name>oss-jfrog-artifactory-snapshots</name>
+			<id>jfrog-oss-snapshots</id>
+			<name>artifactory-snapshots</name>
 			<url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
 		</snapshotRepository>
 	</distributionManagement>
